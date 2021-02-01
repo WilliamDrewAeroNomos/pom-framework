@@ -1,0 +1,318 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.governmentcio</groupId>
+	<artifactId>seleniumframework</artifactId>
+	<version>2.0</version>
+	<packaging>jar</packaging>
+
+	<name>seleniumframework</name>
+
+	<url>http://www.governmentcio.com</url>
+
+	<properties>
+
+		<!-- Dependency versions -->
+
+		<junit.version>4.12</junit.version>
+		<slf4j.version>1.6.1</slf4j.version>
+		<selenium.version>2.52.0</selenium.version>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<gitlab-address>www.gitlab.devgovcio.com/wdrew</gitlab-address>
+		<sonar-address>52.91.50.188</sonar-address>
+		<mysql-address>52.91.50.188</mysql-address>
+		<jenkins-address>54.85.12.58</jenkins-address>
+
+	</properties>
+
+	<!-- Profiles -->
+
+	<profiles>
+
+		<profile>
+			<id>windows</id>
+			<activation>
+				<os>
+					<name>Windows XP</name>
+					<family>Windows</family>
+					<arch>x86</arch>
+					<version>5.1.2600</version>
+				</os>
+			</activation>
+			<properties>
+				<custom-smx-type>zip</custom-smx-type>
+				<script-extension>.bat</script-extension>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>win64</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<name>Windows 7</name>
+					<arch>x86</arch>
+				</os>
+			</activation>
+			<properties>
+				<custom-smx-type>zip</custom-smx-type>
+				<script-extension>.bat</script-extension>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>unix</id>
+			<activation>
+				<os>
+					<family>unix</family>
+				</os>
+			</activation>
+			<properties>
+				<custom-smx-type>tar.gz</custom-smx-type>
+				<script-extension />
+			</properties>
+		</profile>
+
+		<profile>
+			<id>sonar</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<sonar.host.url>http://${sonar-address}:9000</sonar.host.url>
+				<sonar.jdbc.url>jdbc:mysql://${mysql-address}:3306/sonar?useUnicode=true&amp;characterEncoding=utf8</sonar.jdbc.url>
+				<sonar.jdbc.username>sonar</sonar.jdbc.username>
+				<sonar.jdbc.password>sonar</sonar.jdbc.password>
+				<sonar.language>java</sonar.language>
+				<sonar.jdbc.driver>com.mysql.jdbc.Driver</sonar.jdbc.driver>
+			</properties>
+		</profile>
+
+	</profiles>
+
+	<!-- SCM connection -->
+	<scm>
+		<connection>scm:git:http://${gitlab-address}/selenium-pom-framework.git</connection>
+	  <tag>seleniumframework-2.0</tag>
+  </scm>
+
+	<!-- Distribution management -->
+
+	<distributionManagement>
+
+		<snapshotRepository>
+			<id>selenium-pom-snapshot-local</id>
+			<name>Local repository for Selenium POM framework snapshot artifacts</name>
+			<url>http://${artifact-repo-address-port}/artifactory/selenium-pom-snapshot-local 
+		</url>
+		</snapshotRepository>
+
+		<repository>
+			<id>selenium-pom-release-local</id>
+			<name>Local repository for Selenium POM framework release artifacts</name>
+			<url>http://${artifact-repo-address-port}/artifactory/selenium-pom-release-local 
+		</url>
+		</repository>
+
+	</distributionManagement>
+
+	<!-- Build -->
+
+	<build>
+
+		<defaultGoal>install</defaultGoal>
+
+		<pluginManagement>
+
+			<plugins>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>2.10</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.9.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>2.8.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.3</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>2.16</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.7</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.10</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.2</version>
+					<configuration>
+						<preparationGoals>clean verify install</preparationGoals>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.15</version>
+					<configuration>
+						<systemPropertyVariables>
+							<propertyName>SELENIUM_GRID_URL</propertyName>
+							<buildDirectory>${selenium.grid.url}</buildDirectory>
+						</systemPropertyVariables>
+					</configuration>
+				</plugin>
+
+				<!-- Selenium -->
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>selenium-maven-plugin</artifactId>
+					<version>2.3</version>
+				</plugin>
+
+				<!-- War creation -->
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.6</version>
+				</plugin>
+
+			</plugins>
+
+		</pluginManagement>
+
+	</build>
+
+	<!-- Reporting -->
+
+	<reporting>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.2</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.16</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.8.1</version>
+			</plugin>
+
+		</plugins>
+
+	</reporting>
+
+
+	<!-- Dependency management -->
+
+	<dependencyManagement>
+
+		<dependencies>
+
+			<!-- Logging with Java commons logging dependencies -->
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<!-- JUnit -->
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+			</dependency>
+
+			<!-- Selenium -->
+
+			<dependency>
+				<groupId>org.seleniumhq.selenium</groupId>
+				<artifactId>selenium-java</artifactId>
+				<version>${selenium.version}</version>
+			</dependency>
+
+		</dependencies>
+
+	</dependencyManagement>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+		</dependency>
+
+	</dependencies>
+</project>
